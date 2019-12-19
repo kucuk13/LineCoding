@@ -4,12 +4,18 @@ import javax.swing.*;
 
 public class NRZInvert {
 
+    public static void draw (JFrame f, String s){
+        s = covertToNRZInvert(s);
+        s = NRZLevel.covertToNRZLevel(s);
+        NRZLevel.draw(f, s);
+    }
+
     public static String covertToNRZInvert(String s){
         String str = "";
         if (s.charAt(0) == '0'){
-            str += "1";
-        } else {
             str += "0";
+        } else {
+            str += "1";
         }
         for (int i = 0; i < s.length()-1; i++){
             if(s.charAt(i+1) == '1'){
@@ -27,8 +33,20 @@ public class NRZInvert {
         return str;
     }
 
-    public static void draw (JFrame f, String s){
-        s = NRZInvert.covertToNRZInvert(s);
-        NRZLevel.draw(f, s);
+    public static String convertFromNRZInvert(String s){
+        String str = "";
+        if (s.charAt(0) == '0'){
+            str += "0";
+        } else {
+            str += "1";
+        }
+        for (int i = 0; i < s.length()-1; i++){
+            if(s.charAt(i+1) == s.charAt(i)){
+                str += "0";
+            } else {
+                str += "1";
+            }
+        }
+        return str;
     }
 }

@@ -6,37 +6,41 @@ import java.awt.event.ActionListener;
 
 public class Frame extends JFrame {
     JLabel label1, label2, label3, label4, label5, label6;
+    static JRadioButton radioButton1, radioButton2;
     static JTextField tf_dataRate, tf_text;
     JComboBox comboBox1;
     JButton button;
+    static ButtonGroup bg;
     static JLabel[] pictures = new JLabel[160];
     static String pathPlus1, pathZero, pathMinus1, pathLine, pathDashedLine, pathM0, pathM1;
     static final int x = 50;
     static final int y = 50;
     static final int w = 135;
     static final int h = 30;
-    static int dataRate = 3;
 
     public Frame(String name, int width, int height){
         super(name);
         setSize(width, height);
-        pathPlus1 = "C:\\Users\\KAAN KÜÇÜK\\Desktop\\+1.png";
-        pathZero = "C:\\Users\\KAAN KÜÇÜK\\Desktop\\0.png";
-        pathMinus1 = "C:\\Users\\KAAN KÜÇÜK\\Desktop\\-1.png";
-        pathLine = "C:\\Users\\KAAN KÜÇÜK\\Desktop\\line.png";
-        pathDashedLine = "C:\\Users\\KAAN KÜÇÜK\\Desktop\\dashed line.png";
-        pathM0 = "C:\\Users\\KAAN KÜÇÜK\\Desktop\\M0.png";
-        pathM1 = "C:\\Users\\KAAN KÜÇÜK\\Desktop\\M1.png";
-        label1 = newLabel("Data Rate:", x, y);
-        tf_dataRate = newTextField(x+150, y);
-        label2 = newLabel("Line Coding Yöntemi:", x, y+50);
-        comboBox1 = newComboBox( x+150, y+50);
-        label3 = newLabel("Text:", x, y+100);
-        tf_text = newTextField(x+150, y+100);
-        button =  newButton(this, "Çevir", x+100, y+150);
-        label4 = newResultLabel("Text:", x, y+200);
-        label5 = newResultLabel("Bit Dizisi:", x, y+240);
-        label6 = newResultLabel("", x, y+330);
+        pathPlus1 = "images\\+1.png";
+        pathZero = "images\\0.png";
+        pathMinus1 = "images\\-1.png";
+        pathLine = "images\\line.png";
+        pathDashedLine = "images\\dashed line.png";
+        pathM0 = "images\\M0.png";
+        pathM1 = "images\\M1.png";
+        bg = new ButtonGroup();
+        radioButton1 = newRadioButton("Text > Graph", x, y);
+        radioButton2 = newRadioButton("Graph > Text",x+150, y);
+        label1 = newLabel("Data Rate:", x, y+50);
+        tf_dataRate = newTextField(x+150, y+50);
+        label2 = newLabel("Line Coding Yöntemi:", x, y+100);
+        comboBox1 = newComboBox( x+150, y+100);
+        label3 = newLabel("Text:", x, y+150);
+        tf_text = newTextField(x+150, y+150);
+        button =  newButton(this, "Çevir", x+100, y+200);
+        label4 = newResultLabel("Text:", x, y+250);
+        label5 = newResultLabel("Bit Dizisi:", x, y+290);
+        label6 = newResultLabel("", x, y+380);
         add(button);
         add(tf_text);
         add(tf_dataRate);
@@ -46,6 +50,8 @@ public class Frame extends JFrame {
         add(label4);
         add(label5);
         add(label6);
+        add(radioButton1);
+        add(radioButton2);
         add(comboBox1);
         setLayout(null);
         setVisible(true);
@@ -58,29 +64,65 @@ public class Frame extends JFrame {
         b.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String s = tf_text.getText();
-                label4.setText("Text: " + s);
-                s = Ascii.StringToAscii(s);
-                label5.setText("Bit Dizisi: " + s);
-                if (comboBox1.getSelectedIndex() == 0){
-                    label6.setText("Unipolar NRZ: " + s);
-                    Unipolar.draw(f, s);
-                } else if (comboBox1.getSelectedIndex() == 1){
-                    label6.setText("NRZ Level: " + NRZLevel.covertToNRZLevel(s));
-                    NRZLevel.draw(f, s);
-                } else if (comboBox1.getSelectedIndex() == 2){
-                    label6.setText("NRZ Invert: " + NRZInvert.covertToNRZInvert(s));
-                    NRZLevel.draw(f, s);
-                } else if (comboBox1.getSelectedIndex() == 3){
-                    label6.setText("Manchester: " + s);
-                    Manchester.draw(f, s);
-                } else if (comboBox1.getSelectedIndex() == 4){
-                    label6.setText("Differential Manchester: " + DifferentialManchester.covertToDifferentialManchester(s));
-                    DifferentialManchester.draw(f, s);
-                } else if (comboBox1.getSelectedIndex() == 5){
-                    label6.setText("AMI: " + s);
-                    AMI.draw(f, s);
+                if (radioButton2.isSelected()){
+                    label6.setText(" ");
+                    int i = 0;
+                    while (pictures[i] != null && i < 160){
+                        f.remove(pictures[i]);
+                        i++;
+                    }
+                    f.setVisible(false);
+                    f.setVisible(true);
+                    String s = tf_text.getText();
+                    if (comboBox1.getSelectedIndex() == 0){
+                        label5.setText("Bit Dizisi: " + Ascii.AsciiToString(s));
+                        label4.setText("Text: " + s);
+                    } else if (comboBox1.getSelectedIndex() == 1){
+                        s = NRZLevel.covertToNRZLevel(s);
+                        label5.setText("Bit Dizisi: " + Ascii.AsciiToString(s));
+                        label4.setText("Text: " + s);
+                    } else if (comboBox1.getSelectedIndex() == 2){
+                        s = NRZInvert.convertFromNRZInvert(s);
+                        label5.setText("Bit Dizisi: " + Ascii.AsciiToString(s));
+                        label4.setText("Text: " + s);
+                    } else if (comboBox1.getSelectedIndex() == 3){
+                        label5.setText("Bit Dizisi: " + Ascii.AsciiToString(s));
+                        label4.setText("Text: " + s);
+                    } else if (comboBox1.getSelectedIndex() == 4){
+                        s = DifferentialManchester.convertFromDifferentialManchester(s);
+                        label5.setText("Bit Dizisi: " + Ascii.AsciiToString(s));
+                        label4.setText("Text: " + s);
+                    } else if (comboBox1.getSelectedIndex() == 5){
+                        label5.setText("Bit Dizisi: " + Ascii.AsciiToString(s));
+                        label4.setText("Text: " + s);
+                    }
                 }
+                else {
+                    String s = tf_text.getText();
+                    label4.setText("Text: " + s);
+                    s = Ascii.StringToAscii(s);
+                    label5.setText("Bit Dizisi: " + s);
+                    if (comboBox1.getSelectedIndex() == 0){
+                        label6.setText("Unipolar NRZ: " + s);
+                        Unipolar.draw(f, s);
+                    } else if (comboBox1.getSelectedIndex() == 1){
+                        label6.setText("NRZ Level: " + NRZLevel.covertToNRZLevel(s));
+                        NRZLevel.draw(f, s);
+                    } else if (comboBox1.getSelectedIndex() == 2){
+                        label6.setText("NRZ Invert: " + NRZInvert.covertToNRZInvert(s));
+                        NRZInvert.draw(f, s);
+                    } else if (comboBox1.getSelectedIndex() == 3){
+                        label6.setText("Manchester: " + s);
+                        Manchester.draw(f, s);
+                    } else if (comboBox1.getSelectedIndex() == 4){
+                        label6.setText("Differential Manchester: " + DifferentialManchester.covertToDifferentialManchester(s));
+                        DifferentialManchester.draw(f, s);
+                    } else if (comboBox1.getSelectedIndex() == 5){
+                        label6.setText("AMI: " + s);
+                        AMI.draw(f, s);
+                    }
+                }
+
             }
         });
         return b;
@@ -90,7 +132,7 @@ public class Frame extends JFrame {
         JLabel p = new JLabel();
         p.setIcon(new javax.swing.ImageIcon(path));
         p.setSize(20, 41);
-        p.setLocation(x, y+280);
+        p.setLocation(x, y+330);
         return p;
     }
 
@@ -98,7 +140,7 @@ public class Frame extends JFrame {
         JLabel p = new JLabel();
         p.setIcon(new javax.swing.ImageIcon(path));
         p.setSize(2, 41);
-        p.setLocation(x, y+280);
+        p.setLocation(x, y+330);
         return p;
     }
 
@@ -118,6 +160,13 @@ public class Frame extends JFrame {
         JTextField tf = new JTextField("");
         tf.setBounds(x, y, w, h);
         return tf;
+    }
+
+    public static JRadioButton newRadioButton(String content, int x, int y){
+        JRadioButton rd = new JRadioButton(content);
+        rd.setBounds(x, y, w, h);
+        bg.add(rd);
+        return rd;
     }
 
     public static JComboBox newComboBox (int x, int y){
